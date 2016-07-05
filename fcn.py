@@ -15,42 +15,56 @@ class FCN:
         inputs = self.parser()
 
         # Serialise data
-        c_msg = self.create_msg_payload(inputs=inputs)
+        c_msg = self.create_msg_payload(cli_inputs=inputs)
         c_temp = self.create_template(payload_len=len(c_msg))
         c_header = self.create_header(inputs=inputs,
                                       payload_len=len(c_msg),
                                       template_len=len(c_temp))
 
+        # Convert to byte hex
         rap = binascii.a2b_hex(c_msg + c_temp + c_header)
 
         # Send RAP message
         self.sock_open(rap, inputs)
 
-    def create_msg_payload(self, inputs):
+    def create_msg_payload(self, cli_inputs):
+        """Serialises the parameters for the RAP packet
+
+        Parameters
+        ----------
+        cli_inputs:
+            The imported command line interface inputs
+
+        Returns
+        -------
+        msg:
+            The parameters and data about made by a classifier
+
+        """
         packet_count = 0
         kbyte_count = 0
 
-        # Var
-        msg_type = self.msg_type_check(inputs.msgtype)
-        prototype = self.prototype_check(inputs.prototype)
-        export_name = self.export_name_check(inputs.export)
-        table_priority = self.priority_check(inputs.prio)
-        source_port = self.port_check(inputs.srcport)
-        destination_port = self.port_check(inputs.destport)
-        class_name = inputs.mclass
+        # Check the message variables
+        msg_type = self.msg_type_check(cli_inputs.msgtype)
+        prototype = self.prototype_check(cli_inputs.prototype)
+        export_name = self.export_name_check(cli_inputs.export)
+        table_priority = self.priority_check(cli_inputs.prio)
+        source_port = self.port_check(cli_inputs.srcport)
+        destination_port = self.port_check(cli_inputs.destport)
+        class_name = cli_inputs.mclass
 
-        # Create & Check Src IP
+        # Create & Check Source IP
         try:
-            source_ip = self.ip_check(inputs.srcip)
+            source_ip = self.ip_check(cli_inputs.srcip)
             source_ip = source_ip.split('.')
             for i, j in enumerate(source_ip):
                 source_ip[i] = int(j)
         except IndexError:
             sys.exit('Error: Invalid Source IP address detected')
 
-        # Create & Check Dst IP
+        # Create & Check Destination IP
         try:
-            destination_ip = self.ip_check(inputs.destip)
+            destination_ip = self.ip_check(cli_inputs.destip)
             destination_ip = destination_ip.split('.')
             for i, j in enumerate(destination_ip):
                 destination_ip[i] = int(j)
@@ -58,49 +72,49 @@ class FCN:
             sys.exit('Error: Invalid Source IP address detected')
 
         # Assign data variables from CLI
-        o_expname = export_name.encode('hex').ljust(16, '0')
-        o_msgtype = self.convert_to_hex(msg_type, 1)
-        o_srcip = (self.convert_to_hex(source_ip[0], 1)
-                   + self.convert_to_hex(source_ip[1], 1)
-                   + self.convert_to_hex(source_ip[2], 1)
-                   + self.convert_to_hex(source_ip[3], 1))
-        o_destip = (self.convert_to_hex(destination_ip[0], 1)
-                    + self.convert_to_hex(destination_ip[1], 1)
-                    + self.convert_to_hex(destination_ip[2], 1)
-                    + self.convert_to_hex(destination_ip[3], 1))
-        o_srcport = self.convert_to_hex(source_port, 2)
-        o_destport = self.convert_to_hex(destination_port, 2)
-        o_proto = self.convert_to_hex(prototype, 1)
-        o_packetcount = self.convert_to_hex(packet_count, 4)
+        o_export_name = export_name.encode('hex').ljust(16, '0')
+        o_msg_type = self.convert_to_hex(msg_type, 1)
+        o_source_ip = (self.convert_to_hex(source_ip[0], 1) +
+                       self.convert_to_hex(source_ip[1], 1) +
+                       self.convert_to_hex(source_ip[2], 1) +
+                       self.convert_to_hex(source_ip[3], 1))
+        o_destination_ip = (self.convert_to_hex(destination_ip[0], 1) +
+                            self.convert_to_hex(destination_ip[1], 1) +
+                            self.convert_to_hex(destination_ip[2], 1) +
+                            self.convert_to_hex(destination_ip[3], 1))
+        o_source_port = self.convert_to_hex(source_port, 2)
+        o_destination_port = self.convert_to_hex(destination_port, 2)
+        o_protocol = self.convert_to_hex(prototype, 1)
+        o_packet_count = self.convert_to_hex(packet_count, 4)
         o_kbyte_count = self.convert_to_hex(kbyte_count, 4)
-        o_class_len = self.convert_to_hex(len(class_name) + 4, 1)
+        o_classname_len = self.convert_to_hex(len(class_name) + 4, 1)
         o_classname = class_name.encode('hex').ljust(
-            len(inputs.mclass) * 2 + 4, '0')
-        o_classprio = self.convert_to_hex(table_priority, 1)
-        o_t_type = self.convert_to_hex(0, 1)
-        o_t_val = self.convert_to_hex(inputs.timeoutval, 2)
-        o_act = self.convert_to_hex(0, 8)
-        o_act_flg = self.convert_to_hex(inputs.a_flg, 2)
-        o_act_par = self.convert_to_hex(0, 16)
+            len(cli_inputs.mclass) * 2 + 4, '0')
+        o_table_priority = self.convert_to_hex(table_priority, 1)
+        o_timeout_type = self.convert_to_hex(0, 1)
+        o_timeout_value = self.convert_to_hex(cli_inputs.timeoutval, 2)
+        o_action = self.convert_to_hex(0, 8)
+        o_action_flag = self.convert_to_hex(cli_inputs.a_flg, 2)
+        o_action_parameter = self.convert_to_hex(0, 16)
 
         # Create data section
-        msg = (o_expname
-               + o_msgtype
-               + o_srcip
-               + o_destip
-               + o_srcport
-               + o_destport
-               + o_proto
-               + o_packetcount
-               + o_kbyte_count
-               + o_class_len
-               + o_classname
-               + o_classprio
-               + o_t_type
-               + o_t_val
-               + o_act
-               + o_act_flg
-               + o_act_par)
+        msg = (o_export_name +
+               o_msg_type +
+               o_source_ip +
+               o_destination_ip +
+               o_source_port +
+               o_destination_port +
+               o_protocol +
+               o_packet_count +
+               o_kbyte_count +
+               o_classname_len +
+               o_classname +
+               o_table_priority +
+               o_timeout_type +
+               o_timeout_value +
+               o_action +
+               o_action_flag +
+               o_action_parameter)
 
         return msg
 
@@ -109,29 +123,29 @@ class FCN:
         class TemplateClass:
             t_id = self.convert_to_hex(256, 2)
             t_flag = self.convert_to_hex(0, 2)
-            NOP = self.convert_to_hex(0, 2)  # 0
-            SRC_IPV4 = self.convert_to_hex(1, 2)  # 1
-            DST_IPV4 = self.convert_to_hex(2, 2)  # 2
-            SRC_PORT = self.convert_to_hex(3, 2)  # 3
-            DST_PORT = self.convert_to_hex(4, 2)  # 4
-            PROTO = self.convert_to_hex(5, 2)  # 5
-            # SRC_IPV6=         self.byte_conv(6,2) #6
-            # DST_IPV6=         self.byte_conv(7,2) #7
-            IPV4_TOS = self.convert_to_hex(8, 2)  # 8
-            IPV6_LABEL = self.convert_to_hex(9, 2)  # 9
-            CLASS_LABEL = self.convert_to_hex(10, 2)  # a
-            MATCH_DIR = self.convert_to_hex(11, 2)  # b
-            MSG_TYPE = self.convert_to_hex(12, 2)  # c
-            TIMEOUT_TYPE = self.convert_to_hex(13, 2)  # d
-            TIMEOUT = self.convert_to_hex(14, 2)  # e
-            ACTION_FLAGS = self.convert_to_hex(15, 2)  # f
-            PCKT_CNT = self.convert_to_hex(16, 2)  # 10
-            KBYTE_CNT = self.convert_to_hex(17, 2)  # 11
-            ACTION = self.convert_to_hex(32768, 2)  # 8000	#
-            ACTION_PARAMS = self.convert_to_hex(32769, 2)  # 8001   #
-            EXPORT_NAME = self.convert_to_hex(32770, 2)  # 8002	#
-            CLASSIFIER_NAME = self.convert_to_hex(32771, 2)  # 8003	#
-            CLASSES = self.convert_to_hex(49152, 2)  # C000	#
+            NOP = self.convert_to_hex(0, 2)                 # 0
+            SRC_IPV4 = self.convert_to_hex(1, 2)            # 1
+            DST_IPV4 = self.convert_to_hex(2, 2)            # 2
+            SRC_PORT = self.convert_to_hex(3, 2)            # 3
+            DST_PORT = self.convert_to_hex(4, 2)            # 4
+            PROTO = self.convert_to_hex(5, 2)               # 5
+            # SRC_IPV6=         self.byte_conv(6,2)         # 6
+            # DST_IPV6=         self.byte_conv(7,2)         # 7
+            IPV4_TOS = self.convert_to_hex(8, 2)            # 8
+            IPV6_LABEL = self.convert_to_hex(9, 2)          # 9
+            CLASS_LABEL = self.convert_to_hex(10, 2)        # A
+            MATCH_DIR = self.convert_to_hex(11, 2)          # B
+            MSG_TYPE = self.convert_to_hex(12, 2)           # C
+            TIMEOUT_TYPE = self.convert_to_hex(13, 2)       # D
+            TIMEOUT = self.convert_to_hex(14, 2)            # E
+            ACTION_FLAGS = self.convert_to_hex(15, 2)       # F
+            PCKT_CNT = self.convert_to_hex(16, 2)           # 10
+            KBYTE_CNT = self.convert_to_hex(17, 2)          # 11
+            ACTION = self.convert_to_hex(32768, 2)          # 8000
+            ACTION_PARAMS = self.convert_to_hex(32769, 2)   # 8001
+            EXPORT_NAME = self.convert_to_hex(32770, 2)     # 8002
+            CLASSIFIER_NAME = self.convert_to_hex(32771, 2) # 8003
+            CLASSES = self.convert_to_hex(49152, 2)         # C000
             set_id = 0
             set_len = 0
 
@@ -172,7 +186,7 @@ class FCN:
 
         return temp
 
-    def sock_open(self, buff, inputs):
+    def sock_open(self, data, inputs):
         # Host socket assign
         port = self.port_check(inputs.PORT)
         proto = self.protocol_check(inputs.PROTO)  # Proto check
@@ -188,12 +202,12 @@ class FCN:
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
             if proto.lower() in ["udp"]:
-                sock.sendto(buff, (inputs.HOST, port))
+                sock.sendto(data, (inputs.HOST, port))
             else:
                 BUFFER = 1024
                 sock.settimeout(10)
                 sock.connect((inputs.HOST, port))
-                sock.send(buff)
+                sock.send(data)
                 sock.close()
 
         except(socket.timeout):
