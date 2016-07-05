@@ -1,4 +1,48 @@
 #!/usr/local/bin/python
+""" Fake Classifier Node
+Creates Remote Action Protocol Messages using the Command Line Interface
+
+Parameters
+----------
+-h, --help            show this help message and exit
+-i Source IP, --srcip Source IP
+                                The Source IP address in x.x.x.x format
+-j Destination IP, --destip Destination IP
+                                Destination IP address in x.x.x.x format
+-s Sequence Number, --seqno Sequence Number
+                                Sequence Number
+-k Source port, --srcport Source port
+                                Source port 1-65535
+-l Destination port, --destport Destination port
+                                Destination port 1-65535
+-u Protocol Type, --prototype Protocol Type
+                                Protocol Type (Default: TCP)
+                                1: ICMP
+                                2: IGMP
+                                3: GGP
+                                4: IPENCAP
+                                5: ST2
+                                6: TCP
+                                17: UDP
+-a Msg Type, --mtype Msg Type
+                                0: Add (Default)
+                                1: Remove
+                                2: Remove All
+-t Timeout Value, --timeoutval Timeout Value
+                                Timeout value in seconds (Default: 60)
+-e Export, --export Export
+                                Name of export (Default: myexp)
+-c Class, --class Class
+                                Name of class (Default: myclass)
+-n Priority, --prio Priority
+                                Table Priority (Default: 1)
+-x Host, --host Host
+                                Action Node IP (Default: 127.0.0.1)
+-y Port, --port Port
+                                Output Port to Action Node (Default: 5000)
+-z Proto, --proto Proto
+                                Protocol to Action Node (Default: UDP)
+"""
 
 # Import dependencies
 import socket
@@ -17,7 +61,7 @@ class FCN:
         # Serialise data
         c_msg = self.create_msg_payload(cli_inputs=inputs)
         c_temp = self.create_template(payload_len=len(c_msg))
-        c_header = self.create_header(inputs=inputs,
+        c_header = self.create_header(cli_inputs=inputs,
                                       payload_len=len(c_msg),
                                       template_len=len(c_temp))
 
@@ -123,31 +167,32 @@ class FCN:
         class TemplateClass:
             t_id = self.convert_to_hex(256, 2)
             t_flag = self.convert_to_hex(0, 2)
-            NOP = self.convert_to_hex(0, 2)                 # 0
-            SRC_IPV4 = self.convert_to_hex(1, 2)            # 1
-            DST_IPV4 = self.convert_to_hex(2, 2)            # 2
-            SRC_PORT = self.convert_to_hex(3, 2)            # 3
-            DST_PORT = self.convert_to_hex(4, 2)            # 4
-            PROTO = self.convert_to_hex(5, 2)               # 5
-            # SRC_IPV6=         self.byte_conv(6,2)         # 6
-            # DST_IPV6=         self.byte_conv(7,2)         # 7
-            IPV4_TOS = self.convert_to_hex(8, 2)            # 8
-            IPV6_LABEL = self.convert_to_hex(9, 2)          # 9
-            CLASS_LABEL = self.convert_to_hex(10, 2)        # A
-            MATCH_DIR = self.convert_to_hex(11, 2)          # B
-            MSG_TYPE = self.convert_to_hex(12, 2)           # C
-            TIMEOUT_TYPE = self.convert_to_hex(13, 2)       # D
-            TIMEOUT = self.convert_to_hex(14, 2)            # E
-            ACTION_FLAGS = self.convert_to_hex(15, 2)       # F
-            PCKT_CNT = self.convert_to_hex(16, 2)           # 10
-            KBYTE_CNT = self.convert_to_hex(17, 2)          # 11
-            ACTION = self.convert_to_hex(32768, 2)          # 8000
-            ACTION_PARAMS = self.convert_to_hex(32769, 2)   # 8001
-            EXPORT_NAME = self.convert_to_hex(32770, 2)     # 8002
-            CLASSIFIER_NAME = self.convert_to_hex(32771, 2) # 8003
-            CLASSES = self.convert_to_hex(49152, 2)         # C000
-            set_id = 0
-            set_len = 0
+            NOP = self.convert_to_hex(0, 2)                  # 0
+            SRC_IPV4 = self.convert_to_hex(1, 2)             # 1
+            DST_IPV4 = self.convert_to_hex(2, 2)             # 2
+            SRC_PORT = self.convert_to_hex(3, 2)             # 3
+            DST_PORT = self.convert_to_hex(4, 2)             # 4
+            PROTO = self.convert_to_hex(5, 2)                # 5
+            # SRC_IPV6=         self.convert_to_hex(6,2)     # 6
+            # DST_IPV6=         self.convert_to_hex(7,2)     # 7
+            IPV4_TOS = self.convert_to_hex(8, 2)             # 8
+            IPV6_LABEL = self.convert_to_hex(9, 2)           # 9
+            CLASS_LABEL = self.convert_to_hex(10, 2)         # A
+            MATCH_DIR = self.convert_to_hex(11, 2)           # B
+            MSG_TYPE = self.convert_to_hex(12, 2)            # C
+            TIMEOUT_TYPE = self.convert_to_hex(13, 2)        # D
+            TIMEOUT = self.convert_to_hex(14, 2)             # E
+            ACTION_FLAGS = self.convert_to_hex(15, 2)        # F
+            PCKT_CNT = self.convert_to_hex(16, 2)            # 10
+            KBYTE_CNT = self.convert_to_hex(17, 2)           # 11
+            ACTION = self.convert_to_hex(32768, 2)           # 8000
+            ACTION_PARAMS = self.convert_to_hex(32769, 2)    # 8001
+            EXPORT_NAME = self.convert_to_hex(32770, 2)      # 8002
+            CLASSIFIER_NAME = self.convert_to_hex(32771, 2)  # 8003
+            CLASSES = self.convert_to_hex(49152, 2)          # C000
+            set_id = str(self.convert_to_hex(256, 2))  # Set ID = 256 for msg
+            set_len = ts.set_len = self.convert_to_hex(
+                                (payload_len/2) + 4, 2)  # Set length of msg
 
         ts = TemplateClass
 
@@ -156,33 +201,29 @@ class FCN:
         len_act = self.convert_to_hex(8, 2)  # Length of action
         len_actp = self.convert_to_hex(16, 2)  # Length of action parameter
 
-        ts.set_id = self.convert_to_hex(256, 2)  # Set ID = 256 for msg
-        ts.set_len = self.convert_to_hex(
-            payload_len / 2 + 4, 2)  # Set length of msg
-
         # Create template section
         temp = (ts.t_id +
-                ts.t_flag
-                + ts.EXPORT_NAME
-                + len_exp
-                + ts.MSG_TYPE
-                + ts.SRC_IPV4
-                + ts.DST_IPV4
-                + ts.SRC_PORT
-                + ts.DST_PORT
-                + ts.PROTO
-                + ts.PCKT_CNT
-                + ts.KBYTE_CNT
-                + ts.CLASSES
-                + ts.TIMEOUT_TYPE
-                + ts.TIMEOUT
-                + ts.ACTION
-                + len_act
-                + ts.ACTION_FLAGS
-                + ts.ACTION_PARAMS
-                + len_actp
-                + ts.set_id
-                + ts.set_len)
+                ts.t_flag +
+                ts.EXPORT_NAME +
+                len_exp +
+                ts.MSG_TYPE +
+                ts.SRC_IPV4 +
+                ts.DST_IPV4 +
+                ts.SRC_PORT +
+                ts.DST_PORT +
+                ts.PROTO +
+                ts.PCKT_CNT +
+                ts.KBYTE_CNT +
+                ts.CLASSES +
+                ts.TIMEOUT_TYPE +
+                ts.TIMEOUT +
+                ts.ACTION +
+                len_act +
+                ts.ACTION_FLAGS +
+                ts.ACTION_PARAMS +
+                len_actp +
+                ts.set_id +
+                ts.set_len)
 
         return temp
 
@@ -193,24 +234,23 @@ class FCN:
 
         try:
             if proto.lower() in ["udp"]:
-                print
-                "Opening UDP socket on port", port
+                print(
+                    "Opening UDP socket on port", port)
                 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             else:
-                print
-                "Opening TCP socket on port", port
+                print(
+                    "Opening TCP socket on port", port)
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
             if proto.lower() in ["udp"]:
                 sock.sendto(data, (inputs.HOST, port))
             else:
-                BUFFER = 1024
                 sock.settimeout(10)
                 sock.connect((inputs.HOST, port))
                 sock.send(data)
                 sock.close()
 
-        except(socket.timeout):
+        except socket.timeout:
             sys.exit('Error: Couldn\'t connect to socket')
 
     def create_header(self, cli_inputs, payload_len, template_len):
@@ -244,12 +284,12 @@ class FCN:
         m_len = self.convert_to_hex((payload_len + template_len) / 2 + 16,
                                     2)  # Size of payload
         # Create header
-        header = (str(ver)
-                  + str(seq_no)
-                  + str(time_hexed)
-                  + str(set_id)
-                  + str(set_len)
-                  + str(m_len))
+        header = (str(ver) +
+                  str(seq_no) +
+                  str(time_hexed) +
+                  str(set_id) +
+                  str(set_len) +
+                  str(m_len))
 
         return header
 
@@ -272,14 +312,16 @@ class FCN:
                             dest="srcip",
                             default='0.0.0.0',
                             metavar='Source IP',
-                            help="\t\t\tSource IP address in x.x.x.x format")
+                            help="\t\t\t"
+                                 "Source IP address in x.x.x.x format")
         parser.add_argument("-j", "--destip",
                             action="store",
                             dest="destip",
                             default='0.0.0.0',
                             # required = True,
                             metavar='Destination IP',
-                            help='\t\t\tDestination IP address in x.x.x.x format')
+                            help='\t\t\t'
+                                 'Destination IP address in x.x.x.x format')
         parser.add_argument("-s", "--seqno",
                             action="store",
                             dest="seq_no",
@@ -445,6 +487,7 @@ class FCN:
 
     @staticmethod
     def convert_to_hex(_input, _len):
+        """"""
         if _len == 1:
             _input = '{:0>2x}'.format(_input)
             _input = '{:.2}'.format(_input)
