@@ -201,7 +201,7 @@ class FCN:
             EXPORT_NAME = self.convert_to_hexbyte(32770, 2)      # 8002
             CLASSIFIER_NAME = self.convert_to_hexbyte(32771, 2)  # 8003
             CLASSES = self.convert_to_hexbyte(49152, 2)          # C000
-            set_id = str(self.convert_to_hexbyte(256, 2))  # Set ID = 256 for msg
+            set_id = str(self.convert_to_hexbyte(256, 2))  # Set ID = 256
             set_len = self.convert_to_hexbyte(
                                 (payload_len/2) + 4, 2)  # Set length of msg
         ts = TemplateClass
@@ -484,7 +484,6 @@ class FCN:
         except Exception:
             raise NameError(
                 'Flow Source/Destination port must be between 0 and 65535')
-
 
     @staticmethod
     def priority_check(priority):
