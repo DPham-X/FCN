@@ -69,7 +69,7 @@ class FCN:
         rap = binascii.a2b_hex(c_msg + c_temp + c_header)
 
         # Send RAP message
-        self.sock_open(rap, inputs)
+        self.send_message(rap, inputs)
 
     def create_msg_payload(self, cli_inputs):
         """Serialises the parameters for the RAP packet
@@ -117,29 +117,29 @@ class FCN:
 
         # Assign data variables from CLI
         o_export_name = export_name.encode('hex').ljust(16, '0')
-        o_msg_type = self.convert_to_hex(msg_type, 1)
-        o_source_ip = (self.convert_to_hex(source_ip[0], 1) +
-                       self.convert_to_hex(source_ip[1], 1) +
-                       self.convert_to_hex(source_ip[2], 1) +
-                       self.convert_to_hex(source_ip[3], 1))
-        o_destination_ip = (self.convert_to_hex(destination_ip[0], 1) +
-                            self.convert_to_hex(destination_ip[1], 1) +
-                            self.convert_to_hex(destination_ip[2], 1) +
-                            self.convert_to_hex(destination_ip[3], 1))
-        o_source_port = self.convert_to_hex(source_port, 2)
-        o_destination_port = self.convert_to_hex(destination_port, 2)
-        o_protocol = self.convert_to_hex(prototype, 1)
-        o_packet_count = self.convert_to_hex(packet_count, 4)
-        o_kbyte_count = self.convert_to_hex(kbyte_count, 4)
-        o_classname_len = self.convert_to_hex(len(class_name) + 4, 1)
+        o_msg_type = self.convert_to_hexbyte(msg_type, 1)
+        o_source_ip = (self.convert_to_hexbyte(source_ip[0], 1) +
+                       self.convert_to_hexbyte(source_ip[1], 1) +
+                       self.convert_to_hexbyte(source_ip[2], 1) +
+                       self.convert_to_hexbyte(source_ip[3], 1))
+        o_destination_ip = (self.convert_to_hexbyte(destination_ip[0], 1) +
+                            self.convert_to_hexbyte(destination_ip[1], 1) +
+                            self.convert_to_hexbyte(destination_ip[2], 1) +
+                            self.convert_to_hexbyte(destination_ip[3], 1))
+        o_source_port = self.convert_to_hexbyte(source_port, 2)
+        o_destination_port = self.convert_to_hexbyte(destination_port, 2)
+        o_protocol = self.convert_to_hexbyte(prototype, 1)
+        o_packet_count = self.convert_to_hexbyte(packet_count, 4)
+        o_kbyte_count = self.convert_to_hexbyte(kbyte_count, 4)
+        o_classname_len = self.convert_to_hexbyte(len(class_name) + 4, 1)
         o_classname = class_name.encode('hex').ljust(
             len(cli_inputs.mclass) * 2 + 4, '0')
-        o_table_priority = self.convert_to_hex(table_priority, 1)
-        o_timeout_type = self.convert_to_hex(0, 1)
-        o_timeout_value = self.convert_to_hex(cli_inputs.timeoutval, 2)
-        o_action = self.convert_to_hex(0, 8)
-        o_action_flag = self.convert_to_hex(cli_inputs.a_flg, 2)
-        o_action_parameter = self.convert_to_hex(0, 16)
+        o_table_priority = self.convert_to_hexbyte(table_priority, 1)
+        o_timeout_type = self.convert_to_hexbyte(0, 1)
+        o_timeout_value = self.convert_to_hexbyte(cli_inputs.timeoutval, 2)
+        o_action = self.convert_to_hexbyte(0, 8)
+        o_action_flag = self.convert_to_hexbyte(cli_inputs.a_flg, 2)
+        o_action_parameter = self.convert_to_hexbyte(0, 16)
 
         # Create data section
         msg = (o_export_name +
@@ -163,45 +163,55 @@ class FCN:
         return msg
 
     def create_template(self, payload_len):
+        """Creates the template
 
+        Parameters
+        ----------
+        payload_len:
+            The length of the payload message after template
+
+        Returns
+        -------
+        temp:
+            The template format
+        """
         class TemplateClass:
-            t_id = self.convert_to_hex(256, 2)
-            t_flag = self.convert_to_hex(0, 2)
-            NOP = self.convert_to_hex(0, 2)                  # 0
-            SRC_IPV4 = self.convert_to_hex(1, 2)             # 1
-            DST_IPV4 = self.convert_to_hex(2, 2)             # 2
-            SRC_PORT = self.convert_to_hex(3, 2)             # 3
-            DST_PORT = self.convert_to_hex(4, 2)             # 4
-            PROTO = self.convert_to_hex(5, 2)                # 5
-            # SRC_IPV6=         self.convert_to_hex(6,2)     # 6
-            # DST_IPV6=         self.convert_to_hex(7,2)     # 7
-            IPV4_TOS = self.convert_to_hex(8, 2)             # 8
-            IPV6_LABEL = self.convert_to_hex(9, 2)           # 9
-            CLASS_LABEL = self.convert_to_hex(10, 2)         # A
-            MATCH_DIR = self.convert_to_hex(11, 2)           # B
-            MSG_TYPE = self.convert_to_hex(12, 2)            # C
-            TIMEOUT_TYPE = self.convert_to_hex(13, 2)        # D
-            TIMEOUT = self.convert_to_hex(14, 2)             # E
-            ACTION_FLAGS = self.convert_to_hex(15, 2)        # F
-            PCKT_CNT = self.convert_to_hex(16, 2)            # 10
-            KBYTE_CNT = self.convert_to_hex(17, 2)           # 11
-            ACTION = self.convert_to_hex(32768, 2)           # 8000
-            ACTION_PARAMS = self.convert_to_hex(32769, 2)    # 8001
-            EXPORT_NAME = self.convert_to_hex(32770, 2)      # 8002
-            CLASSIFIER_NAME = self.convert_to_hex(32771, 2)  # 8003
-            CLASSES = self.convert_to_hex(49152, 2)          # C000
-            set_id = str(self.convert_to_hex(256, 2))  # Set ID = 256 for msg
-            set_len = ts.set_len = self.convert_to_hex(
+            t_id = self.convert_to_hexbyte(256, 2)
+            t_flag = self.convert_to_hexbyte(0, 2)
+            NOP = self.convert_to_hexbyte(0, 2)                  # 0
+            SRC_IPV4 = self.convert_to_hexbyte(1, 2)             # 1
+            DST_IPV4 = self.convert_to_hexbyte(2, 2)             # 2
+            SRC_PORT = self.convert_to_hexbyte(3, 2)             # 3
+            DST_PORT = self.convert_to_hexbyte(4, 2)             # 4
+            PROTO = self.convert_to_hexbyte(5, 2)                # 5
+            # SRC_IPV6 = self.convert_to_hex(6, 2)                 # 6
+            # DST_IPV6 = self.convert_to_hex(7, 2)                 # 7
+            IPV4_TOS = self.convert_to_hexbyte(8, 2)             # 8
+            IPV6_LABEL = self.convert_to_hexbyte(9, 2)           # 9
+            CLASS_LABEL = self.convert_to_hexbyte(10, 2)         # A
+            MATCH_DIR = self.convert_to_hexbyte(11, 2)           # B
+            MSG_TYPE = self.convert_to_hexbyte(12, 2)            # C
+            TIMEOUT_TYPE = self.convert_to_hexbyte(13, 2)        # D
+            TIMEOUT = self.convert_to_hexbyte(14, 2)             # E
+            ACTION_FLAGS = self.convert_to_hexbyte(15, 2)        # F
+            PCKT_CNT = self.convert_to_hexbyte(16, 2)            # 10
+            KBYTE_CNT = self.convert_to_hexbyte(17, 2)           # 11
+            ACTION = self.convert_to_hexbyte(32768, 2)           # 8000
+            ACTION_PARAMS = self.convert_to_hexbyte(32769, 2)    # 8001
+            EXPORT_NAME = self.convert_to_hexbyte(32770, 2)      # 8002
+            CLASSIFIER_NAME = self.convert_to_hexbyte(32771, 2)  # 8003
+            CLASSES = self.convert_to_hexbyte(49152, 2)          # C000
+            set_id = str(self.convert_to_hexbyte(256, 2))  # Set ID = 256 for msg
+            set_len = self.convert_to_hexbyte(
                                 (payload_len/2) + 4, 2)  # Set length of msg
-
         ts = TemplateClass
 
         # Optionals
-        len_exp = self.convert_to_hex(8, 2)  # Length of export name
-        len_act = self.convert_to_hex(8, 2)  # Length of action
-        len_actp = self.convert_to_hex(16, 2)  # Length of action parameter
+        len_exp = self.convert_to_hexbyte(8, 2)  # Length of export name
+        len_act = self.convert_to_hexbyte(8, 2)  # Length of action
+        len_actp = self.convert_to_hexbyte(16, 2)  # Length of action parameter
 
-        # Create template section
+        # Create template message
         temp = (ts.t_id +
                 ts.t_flag +
                 ts.EXPORT_NAME +
@@ -227,24 +237,39 @@ class FCN:
 
         return temp
 
-    def sock_open(self, data, inputs):
+    def send_message(self, data, inputs):
+        """Connects to a remote host using TCP or UDP and sends the RAP
+        message
+
+        Parameters
+        ----------
+        data:
+            The serialised message to be sent
+        inputs:
+            The Host IP, Port Number, Protocol name
+
+        """
         # Host socket assign
         port = self.port_check(inputs.PORT)
         proto = self.protocol_check(inputs.PROTO)  # Proto check
 
         try:
+            # Open UDP Socket if UDP
             if proto.lower() in ["udp"]:
                 print(
                     "Opening UDP socket on port", port)
                 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+                # Send UDP Message
+                sock.sendto(data, (inputs.HOST, port))
+
+            # Open TCP Socket if TCP
             else:
                 print(
                     "Opening TCP socket on port", port)
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-            if proto.lower() in ["udp"]:
-                sock.sendto(data, (inputs.HOST, port))
-            else:
+                # Send TCP Message
                 sock.settimeout(10)
                 sock.connect((inputs.HOST, port))
                 sock.send(data)
@@ -275,14 +300,14 @@ class FCN:
         current_time = int(time.time())
 
         # Create initial header variables
-        ver = self.convert_to_hex(_input=1, _len=2)
+        ver = self.convert_to_hexbyte(_input=1, _len=2)
         seq_no = cli_inputs.seq_no
-        time_hexed = self.convert_to_hex(_input=current_time, _len=4)
-        set_id = self.convert_to_hex(1, 2)  # Set ID = 1 for template
-        set_len = self.convert_to_hex(
+        time_hexed = self.convert_to_hexbyte(_input=current_time, _len=4)
+        set_id = self.convert_to_hexbyte(1, 2)  # Set ID = 1 for template
+        set_len = self.convert_to_hexbyte(
             template_len / 2, 2)  # Set length of template
-        m_len = self.convert_to_hex((payload_len + template_len) / 2 + 16,
-                                    2)  # Size of payload
+        m_len = self.convert_to_hexbyte((payload_len + template_len) / 2 + 16,
+                                        2)  # Size of payload
         # Create header
         header = (str(ver) +
                   str(seq_no) +
@@ -438,56 +463,175 @@ class FCN:
 
     @staticmethod
     def port_check(port):
-        if 0 <= port <= 65535:
-            return port
-        else:
-            sys.exit(
-                'Error: '
+        """Checks if if the port number is valid
+
+        Parameters
+        ----------
+        port:
+            The port number
+
+        Returns
+        -------
+            The port number for valid numbers
+
+        """
+        try:
+            if 0 <= port <= 65535:
+                return port
+            else:
+                raise NameError(
+                    'Flow Source/Destination port must be between 0 and 65535')
+        except Exception:
+            raise NameError(
                 'Flow Source/Destination port must be between 0 and 65535')
+
 
     @staticmethod
     def priority_check(priority):
-        if 0 <= priority < 256:
-            return priority
-        else:
-            sys.exit('Error: Priority must be between 0 and 255')
+        """Checks if if the priority number is a valid number
+
+        Parameters
+        ----------
+        priority:
+            The priority number
+
+        Returns
+        -------
+            The priority for valid numbers
+
+        """
+        try:
+            if 0 <= priority < 256:
+                return priority
+            else:
+                raise NameError('Error: Priority must be between 0 and 255')
+        except Exception:
+            raise NameError('Error: Priority must be between 0 and 255')
 
     @staticmethod
-    def prototype_check(prototype):
-        if 0 <= prototype < 256:
-            return prototype
-        else:
-            sys.exit('Error: Invalid protocol type')
+    def prototype_check(protocol_type):
+        """Checks if if the protocol type is a valid number
+
+        Parameters
+        ----------
+        protocol_type:
+            The protocol type number
+
+        Returns
+        -------
+            The protocol type if valid
+
+        """
+        try:
+            if 0 <= protocol_type < 256:
+                return protocol_type
+            else:
+                raise NameError('Error: Invalid protocol type')
+        except Exception:
+            raise NameError('Error: Invalid protocol type')
 
     @staticmethod
     def msg_type_check(msg_type):
-        if 0 <= msg_type < 5:
-            return msg_type
-        else:
-            sys.exit('Error: Msg type must be between 0-2')
+        """Checks if msg type if valid between 0 and 2
+
+        Parameters
+        ----------
+        msg_type:
+            The msg type number
+
+        Returns
+        -------
+            The msg_type if valid
+
+        """
+        try:
+            if 0 <= msg_type < 3:
+                return msg_type
+            else:
+                raise NameError('Invalid Msg Type')
+        except Exception:
+            raise NameError('Invalid Msg Type')
 
     @staticmethod
     def export_name_check(export_name):
-        if len(export_name) <= 8:
-            return export_name
-        else:
-            sys.exit('Error: Class Name is too long')
+        """Checks if the name of the exporter is 8 chars or less
+
+        Parameters
+        ----------
+        export_name:
+            The name of an exporter
+
+        Returns
+        -------
+            The export name if it is valid
+        """
+        try:
+            if len(export_name) <= 8:
+                return export_name
+            else:
+                raise NameError('Invalid Export Name')
+        except Exception:
+                raise NameError('Invalid Export Name')
 
     @staticmethod
     def protocol_check(protocol):
-        if protocol.lower() in ["tcp", "udp"]:
-            return protocol
+        """Checks if the protocol in either TCP or UDP
+
+        Parameters
+        ----------
+        protocol:
+            The input protocol
+
+        Returns
+        -------
+            The protocol if it is valid
+        """
+        try:
+            if protocol.lower() in ["tcp", "udp"]:
+                return protocol
+            else:
+                raise NameError("Invalid Protocol")
+        except Exception:
+            raise NameError("Invalid Protocol")
+
+    @staticmethod
+    def ip_check(address):
+        """Checks if IP address is a valid IPv4 address
+
+        Parameters
+        ----------
+        address:
+            The input IP address
+
+        Returns
+        -------
+            The IP address if it is valid
+
+        """
+        try:
+            socket.inet_pton(socket.AF_INET, address)
+        except Exception:
+            raise NameError('Invalid IP')
         else:
-            sys.exit("Error: only UDP or TCP supported")
+            return address
 
     @staticmethod
-    def ip_check(addr):
-        socket.inet_pton(socket.AF_INET, addr)
-        return addr
-
-    @staticmethod
-    def convert_to_hex(_input, _len):
-        """"""
+    def convert_to_hexbyte(_input, _len):
+        """Converts to hexbyte format
+        00 -> 0x00
+        15 -> 0x0F
+        
+        Parameters
+        ----------
+        _input:
+            The input integer to be converted
+        _len:
+            The length required for output format
+        Returns
+        -------
+            The hexbyte format
+            
+        """
         if _len == 1:
             _input = '{:0>2x}'.format(_input)
             _input = '{:.2}'.format(_input)
