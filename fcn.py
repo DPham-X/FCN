@@ -52,7 +52,7 @@ import binascii
 import argparse
 
 
-class FCN:
+class FCN(object):
 
     def __init__(self):
         # Get command line inputs
@@ -66,7 +66,8 @@ class FCN:
                                       template_len=len(c_temp))
 
         # Convert to byte hex
-        rap = binascii.a2b_hex(c_msg + c_temp + c_header)
+        print c_header
+        rap = binascii.a2b_hex(c_header + c_temp + c_msg)
 
         # Send RAP message
         self.send_message(rap, inputs)
@@ -301,7 +302,7 @@ class FCN:
 
         # Create initial header variables
         ver = self.convert_to_hexbyte(_input=1, _len=2)
-        seq_no = cli_inputs.seq_no
+        seq_no = self.convert_to_hexbyte(_input=cli_inputs.seq_no, _len=4)
         time_hexed = self.convert_to_hexbyte(_input=current_time, _len=4)
         set_id = self.convert_to_hexbyte(1, 2)  # Set ID = 1 for template
         set_len = self.convert_to_hexbyte(
@@ -310,11 +311,12 @@ class FCN:
                                         2)  # Size of payload
         # Create header
         header = (str(ver) +
+                  str(m_len) +
                   str(seq_no) +
                   str(time_hexed) +
                   str(set_id) +
-                  str(set_len) +
-                  str(m_len))
+                  str(set_len)
+                  )
 
         return header
 
