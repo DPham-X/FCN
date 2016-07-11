@@ -53,8 +53,14 @@ import argparse
 
 
 class FCN(object):
+    """Fake Classifier Node CLI
+
+    """
 
     def __init__(self):
+        """Initialise FCN CLI
+
+        """
         # Get command line inputs
         inputs = self.parser()
 
@@ -66,7 +72,6 @@ class FCN(object):
                                       template_len=len(c_temp))
 
         # Convert to byte hex
-        print c_header
         rap = binascii.a2b_hex(c_header + c_temp + c_msg)
 
         # Send RAP message
@@ -204,7 +209,7 @@ class FCN(object):
             CLASSES = self.convert_to_hexbyte(49152, 2)          # C000
             set_id = str(self.convert_to_hexbyte(256, 2))  # Set ID = 256
             set_len = self.convert_to_hexbyte(
-                                (payload_len/2) + 4, 2)  # Set length of msg
+                (payload_len / 2) + 4, 2)  # Set length of msg
         ts = TemplateClass
 
         # Optionals
@@ -315,8 +320,7 @@ class FCN(object):
                   str(seq_no) +
                   str(time_hexed) +
                   str(set_id) +
-                  str(set_len)
-                  )
+                  str(set_len))
 
         return header
 
@@ -572,7 +576,7 @@ class FCN(object):
             else:
                 raise NameError('Invalid Export Name')
         except Exception:
-                raise NameError('Invalid Export Name')
+            raise NameError('Invalid Export Name')
 
     @staticmethod
     def protocol_check(protocol):
@@ -621,7 +625,7 @@ class FCN(object):
         """Converts to hexbyte format
         00 -> 0x00
         15 -> 0x0F
-        
+
         Parameters
         ----------
         _input:
@@ -631,7 +635,7 @@ class FCN(object):
         Returns
         -------
             The hexbyte format
-            
+
         """
         if _len == 1:
             _input = '{:0>2x}'.format(_input)
