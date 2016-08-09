@@ -27,50 +27,6 @@ class FCNGui(QWidget):
     host_protocol = 'TCP'
     msg_type = 0
 
-    def get_var(self):
-        """Gets the variables from the GUI
-
-        Returns
-        -------
-        The class containing all the parameters in the same format as the CLI
-        """
-        class ImportVariables:
-            """Contains the FCN parameters
-
-            """
-            # Try get IPs and Ports
-            try:
-                srcip = str(self.source_ip_edit.text())
-            except RuntimeError:
-                pass
-            try:
-                destip = str(self.destination_ip_edit.text())
-            except RuntimeError:
-                pass
-            try:
-                srcport = int(self.source_port_edit.text())
-            except RuntimeError:
-                pass
-            try:
-                destport = int(self.destination_port_edit.text())
-            except RuntimeError:
-                pass
-
-                # Get the rest of the parameters
-                seq_no = int(self.seq_no_edit.text())
-                prototype = self.protocol
-                msgtype = self.msg_type
-                timeoutval = int(self.timeout_val_edit.text())
-                export = str(self.export_name_edit.text())
-                mclass = str(self.class_name_edit.text())
-                prio = int(self.priority_edit.text())
-                HOST = str(self.host_ip_edit.text())
-                PORT = int(self.host_port_edit.text())
-                PROTO = self.host_protocol
-                a_flg = 0
-
-        return ImportVariables
-
     def __init__(self, parent=None):
         """Main function
 
@@ -96,6 +52,51 @@ class FCNGui(QWidget):
 
         # Send button handler
         self.send_button.clicked.connect(self.send_message_handler)
+
+    def get_var(self):
+        """Gets the variables from the GUI
+
+        Returns
+        -------
+        The class containing all the parameters in the same format as the CLI
+        """
+
+        class _ImportVariables:
+            """Contains the FCN parameters
+
+            """
+            # Try get IPs and Ports
+            try:
+                srcip = str(self.source_ip_edit.text())
+            except:
+                pass
+            try:
+                destip = str(self.destination_ip_edit.text())
+            except:
+                pass
+            try:
+                srcport = int(self.source_port_edit.text())
+            except:
+                pass
+            try:
+                destport = int(self.destination_port_edit.text())
+            except:
+                pass
+
+            # Get the rest of the parameters
+            seq_no = int(self.seq_no_edit.text())
+            prototype = self.protocol
+            msgtype = self.msg_type
+            timeoutval = int(self.timeout_val_edit.text())
+            export = str(self.export_name_edit.text())
+            mclass = str(self.class_name_edit.text())
+            prio = int(self.priority_edit.text())
+            HOST = str(self.host_ip_edit.text())
+            PORT = int(self.host_port_edit.text())
+            PROTO = self.host_protocol
+            a_flg = 0
+
+        return _ImportVariables()
 
     def header_ui(self):
         """Creates the header UI labels
@@ -323,15 +324,15 @@ class FCNGui(QWidget):
         else:
             # Get Parameter Inputs
             inputs = self.get_var()
-
+            print(dir(inputs))
             # Defaults values
             if inputs.srcip == '':
                 inputs.srcip = '0.0.0.0'
             if inputs.destip == '':
                 inputs.destip = '0.0.0.0'
-            if 'srcport' not in inputs.__dict__:
+            if 'srcport' not in dir(inputs):
                 inputs.srcport = 0
-            if 'destport' not in inputs.__dict__:
+            if 'destport' not in dir(inputs):
                 inputs.destport = 0
 
             # Instantiate FCN Modules without __init__
