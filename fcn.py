@@ -34,44 +34,31 @@ Creates Remote Action Protocol Messages using the Command Line Interface
 
 Parameters
 ----------
--h, --help            show this help message and exit
--i Source IP, --srcip Source IP
-                                The Source IP address in x.x.x.x format
--j Destination IP, --destip Destination IP
-                                Destination IP address in x.x.x.x format
--s Sequence Number, --seqno Sequence Number
-                                Sequence Number
--k Source port, --srcport Source port
-                                Source port 1-65535
--l Destination port, --destport Destination port
-                                Destination port 1-65535
--u Protocol Type, --prototype Protocol Type
-                                Protocol Type (Default: TCP)
-                                1: ICMP
-                                2: IGMP
-                                3: GGP
-                                4: IPENCAP
-                                5: ST2
-                                6: TCP
-                                17: UDP
--a Msg Type, --mtype Msg Type
-                                0: Add (Default)
-                                1: Remove
-                                2: Remove All
--t Timeout Value, --timeoutval Timeout Value
-                                Timeout value in seconds (Default: 60)
--e Export, --export Export
-                                Name of export (Default: myexp)
--c Class, --class Class
-                                Name of class (Default: myclass)
--n Priority, --prio Priority
-                                Table Priority (Default: 1)
--x Host, --host Host
-                                Action Node IP (Default: 127.0.0.1)
--y Port, --port Port
-                                Output Port to Action Node (Default: 5000)
--z Proto, --proto Proto
-                                Protocol to Action Node (Default: UDP)
+    -h, --help                      Help
+    -i, --srcip                     The Source IP address in x.x.x.x format
+    -j, --destip                    Destination IP address in x.x.x.x format
+    -s, --seqno                     Sequence Number
+    -k, --srcport                   Source port 1-65535
+    -l, --destport                  Destination port 1-65535
+    -u, --prototype                 Protocol Type (Default: TCP)
+                                        1: ICMP
+                                        2: IGMP
+                                        3: GGP
+                                        4: IPENCAP
+                                        5: ST2
+                                        6: TCP
+                                        17: UDP
+    -a,  --mtype                    Message Type
+                                    0: Add (Default)
+                                    1: Remove
+                                    2: Remove All
+    -t,  --timeoutval               Timeout value in seconds (Default: 60)
+    -e,  --export                   Name of export (Default: myexp)
+    -c,  --class                    Name of class (Default: myclass)
+    -n,  --prio                     Table Priority (Default: 1)
+    -x, --host                      Action Node IP (Default: 127.0.0.1)
+    -y, --port                      Output Port to Action Node (Default: 5000)
+    -z, --proto                     Protocol to Action Node (Default: UDP)
 """
 
 # Import dependencies
