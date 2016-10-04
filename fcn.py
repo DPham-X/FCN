@@ -240,7 +240,7 @@ class FCN(object):
             set_id = str(self.convert_to_hexbyte(256, 2))  # Set ID = 256
             set_len = self.convert_to_hexbyte(
                 (payload_len / 2) + 4, 2)  # Set length of msg
-        ts = TemplateClass
+        tc = TemplateClass
 
         # Optionals
         len_exp = self.convert_to_hexbyte(8, 2)  # Length of export name
@@ -248,28 +248,28 @@ class FCN(object):
         len_actp = self.convert_to_hexbyte(16, 2)  # Length of action parameter
 
         # Create template message
-        temp = (ts.t_id +
-                ts.t_flag +
-                ts.EXPORT_NAME +
+        temp = (tc.t_id +
+                tc.t_flag +
+                tc.EXPORT_NAME +
                 len_exp +
-                ts.MSG_TYPE +
-                ts.SRC_IPV4 +
-                ts.DST_IPV4 +
-                ts.SRC_PORT +
-                ts.DST_PORT +
-                ts.PROTO +
-                ts.PCKT_CNT +
-                ts.KBYTE_CNT +
-                ts.CLASSES +
-                ts.TIMEOUT_TYPE +
-                ts.TIMEOUT +
-                ts.ACTION +
+                tc.MSG_TYPE +
+                tc.SRC_IPV4 +
+                tc.DST_IPV4 +
+                tc.SRC_PORT +
+                tc.DST_PORT +
+                tc.PROTO +
+                tc.PCKT_CNT +
+                tc.KBYTE_CNT +
+                tc.CLASSES +
+                tc.TIMEOUT_TYPE +
+                tc.TIMEOUT +
+                tc.ACTION +
                 len_act +
-                ts.ACTION_FLAGS +
-                ts.ACTION_PARAMS +
+                tc.ACTION_FLAGS +
+                tc.ACTION_PARAMS +
                 len_actp +
-                ts.set_id +
-                ts.set_len)
+                tc.set_id +
+                tc.set_len)
 
         return temp
 

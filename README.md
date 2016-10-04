@@ -15,11 +15,12 @@ For more information regarding the FCN refer to the technical report
     
 For an updated FCN check:
 
-    https://github.com/XykotiC/FCN/
+    http://caia.swin.edu.au/urp/diffuse/downloads/fcn-1.0.tar.gz
 
 REQUIREMENTS
 ------------
 `python 2.7`
+`pyQt4`
 
 PARAMETERS
 ----------
@@ -70,15 +71,24 @@ INSTALLATION
 
 `$ git clone https://github.com/XykotiC/FCN.git`
 
+`tar -zxcf fcn-1.0.tar.gz`
+
 GETTING STARTED
 ---------------
-1. Install the Fake Classifier Node
+1. Unzip the Fake Classifier Node
 2. Run the Ryu Action Node or DIFFUSE Action node
 3. Send FCN Commands to the Action Node to create flow rules
     
+    Using the Command Line Interface
+    =================================
     Example:
     
     `python fcn -i 10.0.0.1 -j 10.0.0.2 -k 80 -l 5000 -s 10 -u 6 -a 0 -t 60 -c myclass -n 20 -x 192.168.1.2 -y 5000 -z UDP`
+    
+    Using the Graphical User Interface
+    ==================================
+    
+    Input parameters and send
     
 
 LICENSE
