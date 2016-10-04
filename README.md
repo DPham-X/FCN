@@ -79,16 +79,15 @@ GETTING STARTED
 2. Run the Ryu Action Node or DIFFUSE Action node
 3. Send FCN Commands to the Action Node to create flow rules
     
-    Using the Command Line Interface
-    =================================
-    Example:
+### Using the Command Line Interface
     
-    `python fcn -i 10.0.0.1 -j 10.0.0.2 -k 80 -l 5000 -s 10 -u 6 -a 0 -t 60 -c myclass -n 20 -x 192.168.1.2 -y 5000 -z UDP`
+Example:
     
-    Using the Graphical User Interface
-    ==================================
+`python fcn -i 10.0.0.1 -j 10.0.0.2 -k 80 -l 5000 -s 10 -u 6 -a 0 -t 60 -c myclass -n 20 -x 192.168.1.2 -y 5000 -z UDP`
     
-    Input parameters and send
+### Using the Graphical User Interface
+   
+Input parameters and send
     
 
 LICENSE
