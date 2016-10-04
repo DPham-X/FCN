@@ -11,83 +11,76 @@ Example configurations are provided
 
 For more information regarding the FCN refer to the technical report
 
-    http://caia.swin.edu.au/reports/160422A/CAIA-TR-160422A.pdf
+[Developing a Fake Classifier Node for DIFFUSE](http://caia.swin.edu.au/reports/160422A/CAIA-TR-160422A.pdf)
     
-For an updated FCN check:
+The FCN application can be found at:
 
-    http://caia.swin.edu.au/urp/diffuse/downloads/fcn-1.0.tar.gz
+<http://caia.swin.edu.au/urp/diffuse/downloads/fcn-1.0.tar.gz>
 
 REQUIREMENTS
 ------------
 `python 2.7`
 `pyQt4`
 
+Get Python2.7 here https://www.python.org/download/releases/2.7/
+
+If using the FCN GUI install PyQt4 from https://www.riverbankcomputing.com/software/pyqt/download
+
 PARAMETERS
 ----------
-    -h, --help                      This shows the help message
-    -i, --srcip
-                                    The Source IP address in x.x.x.x format
-    -j, --destip
-                                    Destination IP address in x.x.x.x format
-    -s, --seqno
-                                    Sequence Number
-    -k, --srcport
-                                    Source port 1-65535
-    -l, --destport 
-                                    Destination port 1-65535
-    -u, --prototype
-                                    Protocol Type (Default: TCP)
-                                    1: ICMP
-                                    2: IGMP
-                                    3: GGP
-                                    4: IPENCAP
-                                    5: ST2
-                                    6: TCP
-                                    17: UDP
-    -a , --mtype                                
-                                    Message Type
+    -h, --help                      Help
+    -i, --srcip                     The Source IP address in x.x.x.x format
+    -j, --destip                    Destination IP address in x.x.x.x format
+    -s, --seqno                     Sequence Number
+    -k, --srcport                   Source port 1-65535
+    -l, --destport                  Destination port 1-65535
+    -u, --prototype                 Protocol Type (Default: TCP)
+                                        1: ICMP
+                                        2: IGMP
+                                        3: GGP
+                                        4: IPENCAP
+                                        5: ST2
+                                        6: TCP
+                                        17: UDP
+    -a,  --mtype                    Message Type
                                     0: Add (Default)
                                     1: Remove
-                                    2: Remove All
-    -t , --timeoutval
-                                    Timeout value in seconds (Default: 60)
-    -e , --export
-                                    Name of export (Default: myexp)
-    -c, --class
-                                    Name of class (Default: myclass)
-    -n , --prio
-                                    Table Priority (Default: 1)
-    -x, --host
-                                    Action Node IP (Default: 127.0.0.1)
-    -y, --port
-                                    Output Port to Action Node (Default: 5000)
-    -z, --proto
-                                    Protocol to Action Node (Default: UDP)
-                        
+                                    2: Remove All                                
+    -t,  --timeoutval               Timeout value in seconds (Default: 60)
+    -e,  --export                   Name of export (Default: myexp)
+    -c,  --class                    Name of class (Default: myclass)
+    -n,  --prio                     Table Priority (Default: 1)
+    -x, --host                      Action Node IP (Default: 127.0.0.1)
+    -y, --port                      Output Port to Action Node (Default: 5000)
+    -z, --proto                     Protocol to Action Node (Default: UDP)
+    
 INSTALLATION
 ------------
 
-`$ cd FCN`
-
-`$ git clone https://github.com/XykotiC/FCN.git`
-
-`tar -zxcf fcn-1.0.tar.gz`
+```sh
+$ tar -zxvf fcn-1.0.tar.gz
+```
 
 GETTING STARTED
 ---------------
 1. Unzip the Fake Classifier Node
 2. Run the Ryu Action Node or DIFFUSE Action node
+
+    [Ryu Action Node v1.01](http://caia.swin.edu.au/urp/diffuse/sdn)
+
 3. Send FCN Commands to the Action Node to create flow rules
     
 ### Using the Command Line Interface
     
 Example:
     
-`python fcn -i 10.0.0.1 -j 10.0.0.2 -k 80 -l 5000 -s 10 -u 6 -a 0 -t 60 -c myclass -n 20 -x 192.168.1.2 -y 5000 -z UDP`
+```sh
+python ./fcn.py -i 10.0.0.1 -j 10.0.0.2 -k 80 -l 5000 -s 10 -u 6 -a 0 -t 60 -c myclass -n 20 -x 192.168.1.2 -y 5000 -z TCP
+```
     
 ### Using the Graphical User Interface
    
-Input parameters and send
+    Input parameters and press send
     
 
 LICENSE
