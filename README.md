@@ -1,4 +1,4 @@
-Fake Classifier Node (FCN)
+Fake Classifier Node 1.0 (FCN)
 ==========================
 The FCN is able to create RAP packets to classify flows based on command line parameters.
 
@@ -54,21 +54,22 @@ PARAMETERS
     -y, --port                      Output Port to Action Node (Default: 5000)
     -z, --proto                     Protocol to Action Node (Default: UDP)
     
-INSTALLATION
-------------
+GETTING STARTED
+---------------
+1. Install prequisites - python2.7 and PyQt4 if using the GUI.
+
+2. Unzip the Fake Classifier Node
 
 ```sh
 $ tar -zxvf fcn-1.0.tar.gz
+$ cd fcn-1.0
 ```
 
-GETTING STARTED
----------------
-1. Unzip the Fake Classifier Node
-2. Run the Ryu Action Node or DIFFUSE Action node
+3. Run the Ryu Action Node or DIFFUSE Action node implementation
 
-    [Ryu Action Node v1.01](http://caia.swin.edu.au/urp/diffuse/sdn)
+    See [Ryu Action Node v1.01](http://caia.swin.edu.au/urp/diffuse/sdn)
 
-3. Send FCN Commands to the Action Node to create flow rules
+4. Send FCN Commands to the Action Node to create flow rules
     
 ### Using the Command Line Interface
     
