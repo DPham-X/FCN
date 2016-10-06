@@ -43,9 +43,9 @@ PARAMETERS
                                         6: TCP
                                         17: UDP
     -a,  --mtype                    Message Type
-                                    0: Add (Default)
-                                    1: Remove
-                                    2: Remove All                                
+                                        0: Add (Default)
+                                        1: Remove
+                                        2: Remove All                                
     -t,  --timeoutval               Timeout value in seconds (Default: 60)
     -e,  --export                   Name of export (Default: myexp)
     -c,  --class                    Name of class (Default: myclass)
