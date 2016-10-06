@@ -60,10 +60,10 @@ GETTING STARTED
 
 2. Unzip the Fake Classifier Node
 
-```sh
-$ tar -zxvf fcn-1.0.tar.gz
-$ cd fcn-1.0
-```
+    ```sh
+    $ tar -zxvf fcn-1.0.tar.gz
+    $ cd fcn-1.0
+    ```
 
 3. Run the Ryu Action Node or DIFFUSE Action node implementation
 
