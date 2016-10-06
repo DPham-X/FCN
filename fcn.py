@@ -82,17 +82,17 @@ class FCN(object):
         inputs = self.parser()
 
         # Serialise data
-        c_msg = self.create_msg_payload(cli_inputs=inputs)
-        c_temp = self.create_template(payload_len=len(c_msg))
+        c_msg_pay = self.create_msg_payload(cli_inputs=inputs)
+        c_temp = self.create_template(payload_len=len(c_msg_pay))
         c_header = self.create_header(cli_inputs=inputs,
-                                      payload_len=len(c_msg),
+                                      payload_len=len(c_msg_pay),
                                       template_len=len(c_temp))
 
         # Convert to byte hex
-        rap = binascii.a2b_hex(c_header + c_temp + c_msg)
+        rap_msg = binascii.a2b_hex(c_header + c_temp + c_msg_pay)
 
         # Send RAP message
-        self.send_message(rap, inputs)
+        self.send_message(rap_msg, inputs)
 
     def create_msg_payload(self, cli_inputs):
         """Serialises the parameters for the RAP packet
@@ -104,7 +104,7 @@ class FCN(object):
 
         Returns
         -------
-        msg:
+        msg_pay:
             The parameters and data about made by a classifier
 
         """
@@ -165,25 +165,25 @@ class FCN(object):
         o_action_parameter = self.convert_to_hexbyte(0, 16)
 
         # Create data section
-        msg = (o_export_name +
-               o_msg_type +
-               o_source_ip +
-               o_destination_ip +
-               o_source_port +
-               o_destination_port +
-               o_protocol +
-               o_packet_count +
-               o_kbyte_count +
-               o_classname_len +
-               o_classname +
-               o_table_priority +
-               o_timeout_type +
-               o_timeout_value +
-               o_action +
-               o_action_flag +
-               o_action_parameter)
+        msg_pay = (o_export_name +
+                   o_msg_type +
+                   o_source_ip +
+                   o_destination_ip +
+                   o_source_port +
+                   o_destination_port +
+                   o_protocol +
+                   o_packet_count +
+                   o_kbyte_count +
+                   o_classname_len +
+                   o_classname +
+                   o_table_priority +
+                   o_timeout_type +
+                   o_timeout_value +
+                   o_action +
+                   o_action_flag +
+                   o_action_parameter)
 
-        return msg
+        return msg_pay
 
     def create_template(self, payload_len):
         """Creates the template
@@ -207,8 +207,8 @@ class FCN(object):
             SRC_PORT = self.convert_to_hexbyte(3, 2)             # 3
             DST_PORT = self.convert_to_hexbyte(4, 2)             # 4
             PROTO = self.convert_to_hexbyte(5, 2)                # 5
-            # SRC_IPV6 = self.convert_to_hex(6, 2)                 # 6
-            # DST_IPV6 = self.convert_to_hex(7, 2)                 # 7
+            # SRC_IPV6 = self.convert_to_hex(6, 2)               # 6
+            # DST_IPV6 = self.convert_to_hex(7, 2)               # 7
             IPV4_TOS = self.convert_to_hexbyte(8, 2)             # 8
             IPV6_LABEL = self.convert_to_hexbyte(9, 2)           # 9
             CLASS_LABEL = self.convert_to_hexbyte(10, 2)         # A
@@ -347,7 +347,7 @@ class FCN(object):
 
         Returns
         -------
-        args:
+        cli_inputs:
             The command line interface inputs
 
         """
@@ -407,7 +407,7 @@ class FCN(object):
                                  '5: ST2\n\t\t\t'
                                  '6: TCP\n\t\t\t'
                                  '17: UDP\n')
-        # 7cbt#8egp#9ip
+
         parser.add_argument("-a", '--mtype',
                             action="store",
                             dest="msgtype",
@@ -448,7 +448,7 @@ class FCN(object):
                             metavar='Priority',
                             help='\t\t\t'
                                  'Class Priority (Default: 1)')
-        # Global
+        # Host
         parser.add_argument("-x", "--host",
                             action="store",
                             dest="HOST",
