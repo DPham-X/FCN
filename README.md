@@ -81,7 +81,9 @@ python ./fcn.py -i 10.0.0.1 -j 10.0.0.2 -k 80 -l 5000 -s 10 -u 6 -a 0 -t 60 -c m
     
 ### Using the Graphical User Interface
    
-    Input parameters and press send
+Input parameters and press send
+
+Example:
 
 | 5-tuple 	   | 	      |		        |	  |		  |	        |
 | ---------------- | -------- | --------------- | ------- | ------------- | ----------- |
