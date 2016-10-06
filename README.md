@@ -83,14 +83,14 @@ python ./fcn.py -i 10.0.0.1 -j 10.0.0.2 -k 80 -l 5000 -s 10 -u 6 -a 0 -t 60 -c m
    
     Input parameters and press send
 
-	| 5-tuple 	   | 	      |		        |	  |		  |	        |
-	| ---------------- | -------- | --------------- | ------- | ------------- | ----------- |
-	| Source IP 	   | 10.0.0.1 | Sequence Number | 10	  | Host IP	  | 192.168.1.2 |
-	| Destination IP   | 10.0.0.2 | Message Type    | Add	  | Host Port	  | 5000	|
-	| Source Port 	   | 80	      | Timeout Val     | 60	  | Host Protocol | TCP	        |
-	| Destination Port | 5000     | Export Name     | myexp	  |		  |	        |
-	| Protocol 	   | 6 	      | Class Name      | myclass |		  |	        |
-	|		   |	      | Priority        | 20	  |		  |	        |
+| 5-tuple 	   | 	      |		        |	  |		  |	        |
+| ---------------- | -------- | --------------- | ------- | ------------- | ----------- |
+| Source IP 	   | 10.0.0.1 | Sequence Number | 10	  | Host IP	  | 192.168.1.2 |
+| Destination IP   | 10.0.0.2 | Message Type    | Add	  | Host Port	  | 5000	|
+| Source Port 	   | 80	      | Timeout Val     | 60	  | Host Protocol | TCP	        |
+| Destination Port | 5000     | Export Name     | myexp	  |		  |	        |
+| Protocol 	   | 6 	      | Class Name      | myclass |		  |	        |
+|		   |	      | Priority        | 20	  |		  |	        |
     
 
 LICENSE
