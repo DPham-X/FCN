@@ -85,7 +85,7 @@ Input parameters and press send
 
 Example:
 
-| 5-tuple 	   | 	      |		        |	  |		  |	        |
+| 5-tuple 	   | 	      |	Settings        |	  | Host Settings |	        |
 | ---------------- | -------- | --------------- | ------- | ------------- | ----------- |
 | Source IP 	   | 10.0.0.1 | Sequence Number | 10	  | Host IP	  | 192.168.1.2 |
 | Destination IP   | 10.0.0.2 | Message Type    | Add	  | Host Port	  | 5000	|
